@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Newtopia – Gegenseitige Hilfe in deiner Straße (Prototyp)</title>
+<meta name="description" content="Newtopia: eine kooperative Nachbarschafts-App im Geist von Kropotkin. Klick-Prototyp mit Demo-Daten.">
+<meta name="theme-color" content="#d9653b">
+<style>
+:root{--bg:#fbf5ec;--card:#fffdf9;--ink:#2b2a28;--soft:#6f675d;--terra:#d9653b;--terra2:#f3d3c3;--green:#3e7c59;--green2:#d7eadc;--mustard:#e9b44c;--mustard2:#f8ead0;--line:#ece2d3;--r:18px}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:#efe5d6;color:var(--ink);-webkit-font-smoothing:antialiased}
+#app{max-width:480px;margin:0 auto;min-height:100vh;background:var(--bg);position:relative;padding-bottom:84px;box-shadow:0 0 40px rgba(80,50,20,.12)}
+header.top{position:sticky;top:0;z-index:5;background:rgba(251,245,236,.94);backdrop-filter:blur(8px);padding:14px 18px 10px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:20px;letter-spacing:-.3px}
+.brand .logo{width:30px;height:30px;border-radius:10px;background:linear-gradient(135deg,var(--terra),var(--mustard));display:grid;place-items:center;color:#fff;font-size:16px}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:5px 10px;border-radius:999px;background:var(--green2);color:var(--green)}
+.pill.warn{background:var(--mustard2);color:#8a6418}
+.pill.terra{background:var(--terra2);color:#a8431f}
+main{padding:16px 18px}
+h1{font-size:26px;line-height:1.15;margin:6px 0 8px;letter-spacing:-.5px}
+h2{font-size:19px;margin:22px 0 10px;letter-spacing:-.2px}
+h3{font-size:16px;margin:0 0 4px}
+p{line-height:1.5;margin:6px 0}
+.muted{color:var(--soft)}
+.small{font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin:10px 0;box-shadow:0 2px 6px rgba(120,80,30,.05)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:14px;padding:13px 18px;font-size:16px;font-weight:700;cursor:pointer;background:var(--terra);color:#fff;text-decoration:none;width:100%;font-family:inherit}
+.btn.sec{background:var(--card);color:var(--ink);border:1.5px solid var(--line)}
+.btn.green{background:var(--green)}
+.btn.small{width:auto;padding:8px 13px;font-size:14px;border-radius:11px}
+.btn:active{transform:scale(.98)}
+.btn[disabled]{opacity:.5}
+.row{display:flex;gap:10px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hero{background:linear-gradient(160deg,#f6d9c4 0%,#fbf0dd 60%,#e4efdf 100%);border-radius:24px;padding:22px 18px;margin-top:6px;position:relative;overflow:hidden}
+.hero .houses{font-size:38px;letter-spacing:4px;margin:6px 0 4px}
+blockquote{margin:14px 0;padding:12px 14px;border-left:4px solid var(--mustard);background:var(--mustard2);border-radius:0 12px 12px 0;font-style:italic;line-height:1.45}
+blockquote cite{display:block;font-style:normal;font-size:12px;color:var(--soft);margin-top:6px}
+.avatar{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;font-size:17px;flex:none;position:relative}
+.avatar.big{width:76px;height:76px;font-size:30px}
+.avatar .tick{position:absolute;right:-2px;bottom:-2px;width:18px;height:18px;border-radius:50%;background:var(--green);border:2px solid var(--card);color:#fff;font-size:10px;display:grid;place-items:center}
+.avatar.big .tick{width:24px;height:24px;font-size:13px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tag{font-size:12.5px;padding:5px 9px;border-radius:999px;background:#f3ece1;color:#5c5349}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{white-space:nowrap;border:1.5px solid var(--line);background:var(--card);padding:8px 13px;border-radius:999px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--ink)}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.post .kind{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px}
+.post .kind.angebot{color:var(--green)}
+.post .kind.gesuch{color:var(--terra)}
+.post .icon{font-size:30px;width:50px;height:50px;border-radius:14px;display:grid;place-items:center;flex:none;background:#f6efe4}
+.post .meta{font-size:12.5px;color:var(--soft);margin-top:6px}
+.done-badge{font-size:12px;font-weight:700;color:var(--green)}
+nav.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,253,249,.97);backdrop-filter:blur(8px);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 4px calc(8px + env(safe-area-inset-bottom));z-index:10}
+nav.bottom a{flex:1;text-align:center;text-decoration:none;color:var(--soft);font-size:11.5px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0;border-radius:12px}
+nav.bottom a .i{font-size:21px;line-height:1}
+nav.bottom a.on{color:var(--terra)}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;text-align:center}
+.stat b{display:block;font-size:24px;color:var(--terra)}
+.stat span{font-size:12px;color:var(--soft)}
+.map{background:#e9e1d2;border-radius:20px;padding:14px 12px;position:relative;overflow:hidden}
+.street{height:44px;background:#cfc6b6;border-radius:8px;margin:10px 0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;letter-spacing:3px;font-size:13px;background-image:repeating-linear-gradient(90deg,transparent 0 22px,rgba(255,255,255,.65) 22px 38px);background-size:100% 3px;background-repeat:repeat-x;background-position:center}
+.street span{background:#cfc6b6;padding:0 10px}
+.houserow{display:flex;justify-content:space-between;gap:6px}
+.house{flex:1;background:var(--card);border-radius:10px 10px 6px 6px;padding:6px 2px 7px;text-align:center;font-size:11px;color:var(--soft);cursor:pointer;border:1px solid var(--line);position:relative}
+.house .hn{font-weight:800;color:var(--ink);font-size:12px}
+.house .dots{display:flex;justify-content:center;gap:2px;margin-top:4px;min-height:14px}
+.house .dot{width:14px;height:14px;border-radius:50%;font-size:8px;color:#fff;display:grid;place-items:center;font-weight:800}
+.tree{position:absolute;font-size:22px;opacity:.9}
+.list-item{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer;text-decoration:none;color:inherit}
+.list-item:last-child{border-bottom:none}
+.list-item .grow{flex:1;min-width:0}
+.list-item .sub{font-size:13px;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.section-title{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;margin:16px 0 6px}
+.res{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px dashed var(--line)}
+.res:last-child{border-bottom:none}
+.res .e{font-size:22px;width:32px;text-align:center;flex:none}
+.idcard{width:100%;aspect-ratio:1.586;border-radius:16px;background:linear-gradient(135deg,#d6e4ea,#eef2e8 45%,#f1e3d6);border:1px solid #c9d3d6;position:relative;overflow:hidden;padding:14px;box-shadow:0 8px 20px rgba(40,60,70,.15)}
+.idcard .eagle{position:absolute;right:14px;top:12px;font-size:12px;font-weight:800;color:#5a6b70;letter-spacing:1px}
+.idcard .photo{width:26%;aspect-ratio:.78;border-radius:8px;background:repeating-linear-gradient(45deg,#c7d1d4 0 6px,#d4dcde 6px 12px);position:absolute;left:14px;bottom:14px}
+.idcard .lines{position:absolute;left:34%;bottom:18px;right:14px}
+.idcard .lines div{height:9px;border-radius:5px;background:rgba(90,107,112,.25);margin:7px 0}
+.idcard .chipc{position:absolute;left:14px;top:40px;width:34px;height:26px;border-radius:6px;background:linear-gradient(135deg,#e7c66b,#c99a2e)}
+.nfc{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.nfc i{position:absolute;width:60px;height:60px;border-radius:50%;border:3px solid var(--green);opacity:0;animation:ping 1.6s infinite}
+.nfc i:nth-child(2){animation-delay:.5s}.nfc i:nth-child(3){animation-delay:1s}
+@keyframes ping{0%{transform:scale(.4);opacity:.9}100%{transform:scale(3.2);opacity:0}}
+.steps{display:flex;gap:6px;margin:6px 0 14px}
+.steps div{flex:1;height:5px;border-radius:3px;background:var(--line)}
+.steps div.on{background:var(--green)}
+.pin{display:flex;justify-content:center;gap:10px;margin:16px 0}
+.pin span{width:16px;height:16px;border-radius:50%;border:2px solid var(--soft)}
+.pin span.f{background:var(--ink);border-color:var(--ink)}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:290px;margin:0 auto}
+.pad button{font-size:22px;font-weight:600;padding:14px 0;border-radius:14px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-family:inherit;color:var(--ink)}
+.keep{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.keep .box{border-radius:14px;padding:12px;font-size:13.5px;line-height:1.55}
+.keep .yes{background:var(--green2)}
+.keep .no{background:#f6e3dc}
+.keep h4{margin:0 0 6px;font-size:13px}
+.spinner{width:42px;height:42px;border-radius:50%;border:4px solid var(--line);border-top-color:var(--terra);animation:spin 1s linear infinite;margin:18px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+input,textarea,select{width:100%;padding:12px 13px;border-radius:12px;border:1.5px solid var(--line);font-size:16px;font-family:inherit;background:#fff;color:var(--ink)}
+textarea{min-height:80px;resize:vertical}
+label{display:block;font-weight:700;font-size:14px;margin:12px 0 6px}
+.seg{display:flex;background:#efe6d8;border-radius:12px;padding:4px;gap:4px}
+.seg button{flex:1;border:none;background:none;padding:9px;border-radius:9px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;color:var(--soft)}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.match{border:2px solid var(--mustard);background:linear-gradient(180deg,#fffaf0,#fffdf9)}
+.score{font-size:12px;font-weight:800;color:#8a6418;background:var(--mustard2);padding:4px 8px;border-radius:999px}
+.why{font-size:13.5px;line-height:1.5;color:#4e463d;background:#f7f1e7;border-radius:10px;padding:9px 11px;margin-top:9px}
+.pair{display:flex;align-items:center;gap:8px;margin-top:10px}
+.pair .side{flex:1;background:#f7f1e7;border-radius:12px;padding:9px;font-size:13px;text-align:center}
+.pair .arrow{font-size:20px;color:var(--mustard)}
+.bar{height:12px;border-radius:6px;background:#efe6d8;overflow:hidden;margin:5px 0 2px}
+.bar i{display:block;height:100%;border-radius:6px}
+.costrow{display:flex;justify-content:space-between;font-size:14px;margin-top:10px}
+.principle{display:flex;gap:12px;align-items:flex-start;padding:10px 0}
+.principle .e{font-size:24px;width:40px;height:40px;border-radius:12px;background:var(--mustard2);display:grid;place-items:center;flex:none}
+.vote{display:flex;gap:8px;margin-top:10px}
+.overlay{position:fixed;inset:0;background:rgba(40,30,20,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);width:100%;max-width:480px;border-radius:24px 24px 0 0;padding:18px 18px calc(22px + env(safe-area-inset-bottom));max-height:88vh;overflow:auto;animation:up .25s ease}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.sheet .grab{width:40px;height:5px;border-radius:3px;background:#d8ccbb;margin:0 auto 12px}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 16px;border-radius:14px;font-size:14px;z-index:30;max-width:90%;box-shadow:0 6px 18px rgba(0,0,0,.25);animation:up .25s ease}
+.demo-banner{background:var(--mustard2);color:#7a5a17;font-size:12.5px;text-align:center;padding:6px 10px;font-weight:600}
+.fab{position:fixed;right:max(18px,calc(50% - 222px));bottom:96px;z-index:9;width:58px;height:58px;border-radius:50%;background:var(--terra);color:#fff;border:none;font-size:30px;box-shadow:0 6px 16px rgba(217,101,59,.45);cursor:pointer}
+a.link{color:var(--terra);font-weight:700;text-decoration:none}
+.code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;background:#f3ece1;padding:2px 6px;border-radius:6px}
+footer{text-align:center;font-size:12px;color:var(--soft);padding:18px 0 4px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(function(){
+'use strict';
+var STREET='Kastanienweg';
+var PLZ='22765 Hamburg-Ottensen';
+
+var PEOPLE={
+ aylin:{name:'Aylin',color:'#d9653b',hn:'3',since:'März 2026',bio:'Ich backe zu viel, immer. Zweisprachig, deutsch und türkisch. Komm gern auf einen Tee vorbei.',
+  food:[['🥯','Simit, frisch vom Morgen','8 Stück übrig'],['🫙','Selbstgemachter Ayran','1 Liter, bis Donnerstag']],
+  bake:[['🍞','Frische Hefe','2 Würfel, laufen bald ab']],
+  tools:[['🧵','Nähmaschine','zum Ausleihen oder ich nähe für dich']],
+  skills:[['✂️','Hosen kürzen, Knöpfe annähen',''],['📚','Türkisch-Nachhilfe für Kinder','']],
+  needs:['Jemand, der mal auf den Fahrradschlauch guckt'], helped:14},
+ jonas:{name:'Jonas',color:'#3e7c59',hn:'5',since:'Januar 2026',bio:'Tischler in Rente. Mein Keller ist ein Werkzeugladen. Lieber verleihen als verstauben lassen.',
+  food:[],bake:[],
+  tools:[['🪛','Akkuschrauber mit Bohrerset','zum Ausleihen, gern mit Einweisung'],['🪜','Stehleiter, 6 Stufen',''],['🪚','Stichsäge','']],
+  skills:[['🧱','Regale und Lampen aufhängen','ich bring den Akkuschrauber mit'],['🚲','Fahrräder flicken','']],
+  needs:['Wer erklärt mir mein neues Handy?'], helped:31},
+ hannelore:{name:'Hannelore',color:'#8e6bb5',hn:'7',since:'Februar 2026',bio:'78 Jahre, seit 1971 im Kastanienweg. Ich kenne jede Ecke und jedes Rezept.',
+  food:[['🥚','6 Eier','müssen bis Freitag weg'],['🥛','Halber Liter Milch','bis Mittwoch'],['🍓','Erdbeermarmelade','5 Gläser, selbst eingekocht']],
+  bake:[],
+  tools:[['🫙','Einmachgläser','eine ganze Kiste']],
+  skills:[['🧶','Stricken beibringen',''],['📖','Alte Familienrezepte','']],
+  needs:['Wasserkästen in den 3. Stock tragen','Begleitung zum Arzt am Dienstag'], helped:22},
+ kofi:{name:'Kofi',color:'#2f6f8f',hn:'9',since:'April 2026',bio:'Gelernter Anlagenmechaniker. Wenn es tropft, rauscht oder gluckert: klingel einfach.',
+  food:[['🍌','Kochbananen','eine Staude, zu viel gekauft']],bake:[],
+  tools:[['🔧','Rohrzange und Pömpel','']],
+  skills:[['🚽','Klo reparieren, Spülung einstellen',''],['🚰','Tropfenden Wasserhahn abdichten','']],
+  needs:['Jemand, der mit mir Deutsch-Briefe durchgeht'], helped:19},
+ familie:{name:'Lena & Mats',color:'#c98a1b',hn:'11',since:'Mai 2026',bio:'Zwei Erwachsene, zwei Kinder, ein Lastenrad. Wir tauschen gern Kinderkram.',
+  food:[],bake:[],
+  tools:[['🚲','Lastenrad','zum Ausleihen, am Wochenende'],['🧸','Kinderkleidung Gr. 98 bis 110','Tüte zum Abholen']],
+  skills:[['🎸','Gitarre für Anfänger','']],
+  needs:['Eier für den Geburtstagskuchen am Samstag','Babysitting Freitagabend'], helped:9},
+ piotr:{name:'Piotr',color:'#a0522d',hn:'13',since:'März 2026',bio:'Bäcker aus Leidenschaft, Elektriker von Beruf. Mein Sauerteig heißt Bogdan.',
+  food:[['🥖','Roggenbrot','jeden Samstag ein Laib mehr']],
+  bake:[['🌾','Mehl Type 550','1 kg übrig'],['🫧','Sauerteig-Anstellgut','vom Bogdan, so viel du willst'],['🍬','Vanillezucker und Trockenhefe','']],
+  tools:[['💡','Spannungsprüfer','']],
+  skills:[['🔌','Deckenlampe anschließen','sicher und mit Fachwissen'],['🍞','Sauerteig-Kurs in der Küche','']],
+  needs:[], helped:17},
+ mira:{name:'Mira',color:'#5a8f3e',hn:'15',since:'Juni 2026',bio:'Ich kümmere mich um den Gemeinschaftsgarten hinter Haus 15 und repariere Laptops.',
+  food:[['🥒','Zucchini und Tomaten','aus dem Garten, Kiste vor der Tür'],['🌿','Frische Kräuter','Basilikum, Minze, Petersilie']],bake:[],
+  tools:[['🌱','Gartengeräte','Spaten, Harke, Gießkannen']],
+  skills:[['💻','Laptop- und Handyhilfe',''],['🪴','Pflanzen umtopfen','']],
+  needs:['Eine Leiter für Samstag'], helped:12}
+};
+
+var BASE_POSTS=[
+ {id:1,kind:'angebot',cat:'lebensmittel',icon:'🥚',title:'6 Eier und halber Liter Milch',desc:'Ich schaffe das nicht mehr bis Freitag. Einfach klingeln, Haus 7, 2. Stock.',who:'hannelore',time:'vor 20 Min.',tags:['eier','milch','kuchen','backen']},
+ {id:2,kind:'angebot',cat:'gebackenes',icon:'🥯',title:'Frische Simit, 8 Stück',desc:'Heute früh gebacken. Hole sie dir bis heute Abend.',who:'aylin',time:'vor 1 Std.',tags:['brot','simit','frühstück','gebäck']},
+ {id:3,kind:'angebot',cat:'backzutaten',icon:'🌾',title:'Mehl, Trockenhefe, Vanillezucker',desc:'1 kg Mehl Type 550 und ein paar Tütchen. Für alle, die backen wollen.',who:'piotr',time:'vor 2 Std.',tags:['mehl','hefe','backen','kuchen','zucker']},
+ {id:4,kind:'angebot',cat:'werkzeug',icon:'🪛',title:'Akkuschrauber mit Bohrerset zu leihen',desc:'Akku ist voll. Ich zeig dir gern, wie es geht.',who:'jonas',time:'gestern',tags:['akkuschrauber','bohren','regal','dübel','werkzeug']},
+ {id:5,kind:'angebot',cat:'koennen',icon:'🧱',title:'Ich hänge dir dein Regal auf',desc:'Mit eigenem Akkuschrauber und Wasserwaage. Dauert meistens 20 Minuten.',who:'jonas',time:'gestern',tags:['regal','aufhängen','bohren','möbel','wand']},
+ {id:6,kind:'angebot',cat:'koennen',icon:'🚽',title:'Klo läuft? Ich repariere es.',desc:'Spülkasten, Dichtungen, tropfende Wasserhähne. Material zahlst nur du, Arbeit ist geschenkt.',who:'kofi',time:'vor 3 Tagen',tags:['klo','toilette','spülung','wasserhahn','tropft','sanitär']},
+ {id:7,kind:'angebot',cat:'lebensmittel',icon:'🥒',title:'Zucchini und Tomaten aus dem Garten',desc:'Kiste steht vor Haus 15. Nimm, was du brauchst.',who:'mira',time:'vor 4 Std.',tags:['gemüse','zucchini','tomaten','kochen']},
+ {id:8,kind:'gesuch',cat:'lebensmittel',icon:'🎂',title:'Suche Eier für den Geburtstagskuchen',desc:'Unser Sohn wird 5. Wir brauchen bis Samstag 4 Eier.',who:'familie',time:'vor 35 Min.',tags:['eier','kuchen','backen']},
+ {id:9,kind:'gesuch',cat:'koennen',icon:'📦',title:'Wer trägt mir Wasserkästen hoch?',desc:'Zwei Kästen in den 3. Stock, kein Aufzug. Ich koche dafür Kaffee.',who:'hannelore',time:'vor 5 Std.',tags:['tragen','einkaufen','helfen']},
+ {id:10,kind:'gesuch',cat:'werkzeug',icon:'🪜',title:'Brauche eine Leiter für Samstag',desc:'Zum Kirschbaum im Garten schneiden.',who:'mira',time:'gestern',tags:['leiter','garten']},
+ {id:11,kind:'angebot',cat:'backzutaten',icon:'🍞',title:'2 Würfel frische Hefe',desc:'Laufen übermorgen ab. Lieber verbacken als wegwerfen.',who:'aylin',time:'vor 6 Std.',tags:['hefe','backen','brot']},
+ {id:12,kind:'angebot',cat:'koennen',icon:'🔌',title:'Ich schließe deine Deckenlampe an',desc:'Bin Elektriker. Sicher, sauber, kostenlos.',who:'piotr',time:'vor 2 Tagen',tags:['lampe','strom','elektrik','licht']}
+];
+
+var CATS=[['alle','Alle'],['lebensmittel','🥕 Lebensmittel'],['gebackenes','🥐 Gebackenes'],['backzutaten','🌾 Backzutaten'],['werkzeug','🛠️ Werkzeug'],['koennen','🤲 Können']];
+var CAT_ICON={lebensmittel:'🥕',gebackenes:'🥐',backzutaten:'🌾',werkzeug:'🛠️',koennen:'🤲'};
+
+var KEYWORDS={
+ eier:['eier','ei','kuchen','backen'],ei:['eier'],kuchen:['kuchen','backen','eier','mehl','zucker'],backen:['backen','mehl','hefe','eier','kuchen'],
+ mehl:['mehl','backen'],hefe:['hefe','backen','brot'],brot:['brot','simit','hefe'],milch:['milch'],
+ regal:['regal','aufhängen','bohren','akkuschrauber','dübel'],bohren:['bohren','akkuschrauber','regal'],akkuschrauber:['akkuschrauber','bohren'],aufhängen:['aufhängen','regal','lampe'],
+ klo:['klo','toilette','spülung','sanitär'],toilette:['klo','toilette','spülung'],wasserhahn:['wasserhahn','tropft','sanitär'],tropft:['tropft','wasserhahn','klo'],
+ leiter:['leiter'],lampe:['lampe','elektrik','licht'],licht:['lampe','licht'],gemüse:['gemüse','zucchini','tomaten','kochen'],kochen:['gemüse','kochen'],
+ tragen:['tragen'],werkzeug:['werkzeug','akkuschrauber'],frühstück:['frühstück','simit','brot']
+};
+
+var S=load();
+function load(){try{var s=JSON.parse(localStorage.getItem('newtopia_demo')||'null');if(s&&s.v===1)return s;}catch(e){}return {v:1,verified:false,name:'',myPosts:[],requested:{},votes:{},fee:3};}
+function save(){try{localStorage.setItem('newtopia_demo',JSON.stringify(S));}catch(e){}}
+function posts(){return S.myPosts.concat(BASE_POSTS);}
+function me(){return {name:S.name||'Du',color:'#e9b44c'};}
+function person(id){return id==='me'?me():PEOPLE[id];}
+function esc(t){return String(t).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function initials(n){return esc(n.replace('&','').trim().charAt(0).toUpperCase());}
+function av(id,big,extra){var p=person(id);var tick=(id==='me'&&!S.verified)?'':'<span class="tick">✓</span>';return '<div class="avatar'+(big?' big':'')+'" style="background:'+p.color+';'+(extra||'')+'">'+initials(p.name)+tick+'</div>';}
+
+var app=document.getElementById('app');
+var verifyStep=0,pin='',boardCat='alle',boardKind='alle';
+
+function header(){
+ return '<div class="demo-banner">Klick-Prototyp mit erfundenen Demo-Daten. Nichts wird gesendet oder gespeichert.</div>'+
+ '<header class="top"><a href="#start" style="text-decoration:none;color:inherit" class="brand"><span class="logo">✿</span>Newtopia</a>'+
+ (S.verified?'<span class="pill">✓ '+STREET+'</span>':'<a href="#verify" class="pill warn" style="text-decoration:none">Nicht verifiziert</a>')+'</header>';
+}
+function nav(active){
+ var items=[['home','🏡','Straße'],['board','📌','Brett'],['ki','✨','KI-Vorschlag'],['koop','🤝','Koop'],['me','🙂','Ich']];
+ return '<nav class="bottom">'+items.map(function(i){return '<a href="#'+i[0]+'" class="'+(active===i[0]?'on':'')+'"><span class="i">'+i[1]+'</span>'+i[2]+'</a>';}).join('')+'</nav>';
+}
+function render(){
+ var h=location.hash.replace('#','')||'start';
+ var parts=h.split('/');var r=parts[0];
+ var html='';
+ if(r==='start')html=viewStart();
+ else if(r==='verify')html=viewVerify();
+ else if(r==='home')html=viewHome();
+ else if(r==='board')html=viewBoard();
+ else if(r==='ki')html=viewKI();
+ else if(r==='koop')html=viewKoop();
+ else if(r==='me')html=viewProfile('me');
+ else if(r==='p'&&PEOPLE[parts[1]])html=viewProfile(parts[1]);
+ else if(r==='dev')html=viewDev();
+ else html=viewStart();
+ var navKey=(r==='p')?'home':(r==='dev'?'koop':r);
+ app.innerHTML=header()+'<main>'+html+'<footer>Newtopia · Prototyp v0.1 · eine Idee von Mary · Hamburg 2026</footer></main>'+((r==='start'||r==='verify')?'':nav(navKey))+(r==='board'?'<button class="fab" data-act="newpost" aria-label="Neuer Beitrag">+</button>':'');
+ window.scrollTo(0,0);
+ if(r==='verify')bindVerify();
+ if(r==='ki')bindKI();
+}
+
+/* ---------- START ---------- */
+function viewStart(){
+ return '<div class="hero"><div class="houses">🏠🌳🏡🌳🏠</div>'+
+ '<h1>Gegenseitige Hilfe in deiner Straße.</h1>'+
+ '<p>Newtopia verbindet echte Nachbar:innen. Teile, was du übrig hast: Essen, Gebackenes, Backzutaten, Werkzeug und dein Können. Und frag, wenn du selbst etwas brauchst.</p></div>'+
+ '<div class="grid2" style="margin-top:14px">'+
+ '<div class="card" style="margin:0"><h3>🪪 Echte Menschen</h3><p class="small muted">Verifiziert mit dem Personalausweis. Gespeichert wird nur: echt und wohnt hier.</p></div>'+
+ '<div class="card" style="margin:0"><h3>🚫 Keine Werbung</h3><p class="small muted">Kein Datenverkauf, keine Anzeigen. Niemals.</p></div>'+
+ '<div class="card" style="margin:0"><h3>🤝 Genossenschaft</h3><p class="small muted">Die App gehört den Mitgliedern. Beiträge decken nur die Kosten.</p></div>'+
+ '<div class="card" style="margin:0"><h3>✨ KI hilft verteilen</h3><p class="small muted">Sie schlägt vor, wer wem helfen kann. Entscheiden tun Menschen.</p></div>'+
+ '</div>'+
+ '<blockquote>„Gegenseitige Hilfe ist ebenso ein Naturgesetz wie gegenseitiger Kampf.“<cite>frei nach Pjotr Kropotkin, Gegenseitige Hilfe in der Tier- und Menschenwelt (1902)</cite></blockquote>'+
+ '<a class="btn" href="#verify">Loslegen: Mit Personalausweis verifizieren</a>'+
+ '<p style="text-align:center;margin-top:12px"><a class="link" href="#home" data-act="skipdemo">Demo direkt ansehen →</a></p>'+
+ '<p style="text-align:center"><a class="link" href="#dev">Für Entwickler:innen: Was hier gebaut werden soll</a></p>';
+}
+
+/* ---------- VERIFY ---------- */
+function viewVerify(){
+ var steps='<div class="steps">'+[0,1,2,3].map(function(i){return '<div class="'+(i<=verifyStep?'on':'')+'"></div>';}).join('')+'</div>';
+ var body='';
+ if(verifyStep===0){
+  body='<h1>Mit Personalausweis verifizieren</h1>'+
+  '<p>Newtopia nutzt die <b>Online-Ausweisfunktion</b> (eID) deines Personalausweises. So wissen deine Nachbar:innen: Hier ist ein echter Mensch, der wirklich in dieser Straße wohnt. Das schützt vor Betrüger:innen, Kriminellen und Pädokriminellen.</p>'+
+  '<div class="card"><h3>Was wir uns merken</h3>'+
+  '<div class="keep"><div class="box yes"><h4>✓ Gespeichert</h4>verifiziert: ja<br>Straße: '+STREET+'<br>Datum der Prüfung</div>'+
+  '<div class="box no"><h4>✗ Nie gespeichert</h4>Name aus dem Ausweis<br>Geburtsdatum<br>Ausweisnummer<br>Foto<br>Hausnummer</div></div>'+
+  '<p class="small muted" style="margin-top:10px">Die Ausweisdaten werden nur kurz gelesen, mit der Straße abgeglichen und sofort wieder verworfen. Es gibt keine zentrale Datenbank mit Ausweisdaten.</p></div>'+
+  '<a class="btn green" href="javascript:void 0" data-act="vnext">Weiter</a>';
+ }else if(verifyStep===1){
+  body='<h1>Halte deinen Ausweis ans Handy</h1><p class="muted">Lege den Ausweis flach an die Rückseite deines Handys. Nicht bewegen.</p>'+
+  '<div style="position:relative;margin:22px 8px"><div class="idcard"><div class="eagle">BUNDESREPUBLIK DEUTSCHLAND</div><div class="chipc"></div><div class="photo"></div><div class="lines"><div style="width:70%"></div><div></div><div style="width:55%"></div></div></div>'+
+  '<div class="nfc" id="nfc" style="display:none"><i></i><i></i><i></i></div></div>'+
+  '<p id="nfcmsg" class="small muted" style="text-align:center">Demo: Es wird kein echter Ausweis gelesen.</p>'+
+  '<button class="btn green" id="scan">Ausweis scannen (Demo)</button>';
+ }else if(verifyStep===2){
+  body='<h1>Gib deine 6-stellige PIN ein</h1><p class="muted">Die PIN deines Ausweises. Im Demo kannst du einfach irgendwelche Zahlen tippen.</p>'+
+  '<div class="pin">'+[0,1,2,3,4,5].map(function(i){return '<span class="'+(i<pin.length?'f':'')+'"></span>';}).join('')+'</div>'+
+  '<div class="pad">'+['1','2','3','4','5','6','7','8','9','','0','⌫'].map(function(k){return k?'<button data-pin="'+k+'">'+k+'</button>':'<span></span>';}).join('')+'</div>'+
+  '<div id="checking" style="display:none;text-align:center"><div class="spinner"></div><p class="muted">Prüfe Wohnort, ohne Daten zu speichern …</p></div>';
+ }else{
+  body='<div style="text-align:center;margin-top:10px"><div style="font-size:56px">🎉</div><h1>Verifiziert!</h1><p>Du bist ein echter Mensch und wohnst im <b>'+STREET+'</b>.</p></div>'+
+  '<div class="card" style="background:var(--green2);border-color:#bfdcc8"><p style="margin:0"><b>Das ist alles, was Newtopia jetzt über deinen Ausweis weiß:</b></p><p class="code" style="display:block;margin-top:8px;padding:10px">verifiziert: ja<br>straße: "'+STREET+'"<br>geprüft_am: "'+new Date().toLocaleDateString('de-DE')+'"</p><p class="small" style="margin-bottom:0">Alle anderen Ausweisdaten sind bereits gelöscht.</p></div>'+
+  '<label for="nm">Wie sollen dich deine Nachbar:innen nennen?</label><input id="nm" placeholder="z. B. Mary" value="'+esc(S.name)+'" maxlength="24">'+
+  '<p class="small muted">Den Namen wählst du selbst. Er muss nicht im Ausweis stehen.</p>'+
+  '<button class="btn" data-act="vfinish" style="margin-top:8px">Zu meiner Straße</button>';
+ }
+ return steps+body;
+}
+function bindVerify(){
+ var sc=document.getElementById('scan');
+ if(sc)sc.onclick=function(){sc.disabled=true;sc.textContent='Lese Ausweis …';document.getElementById('nfc').style.display='grid';document.getElementById('nfcmsg').textContent='Verbindung zum Ausweis-Chip (Demo) …';setTimeout(function(){verifyStep=2;pin='';render();},2200);};
+}
+
+/* ---------- HOME / STREET ---------- */
+function viewHome(){
+ var ids=Object.keys(PEOPLE);
+ var byHouse={};ids.forEach(function(id){byHouse[PEOPLE[id].hn]=id;});
+ var top=['1','3','5','7','9'],bottom=['11','13','15','17','19'];
+ function houses(arr){return '<div class="houserow">'+arr.map(function(n){var id=byHouse[n];var dots=id?'<span class="dot" style="background:'+PEOPLE[id].color+'">'+initials(PEOPLE[id].name)+'</span>':'';if(n==='17'&&S.verified)dots='<span class="dot" style="background:#e9b44c">'+initials(me().name)+'</span>';return '<div class="house" '+(id?'data-go="p/'+id+'"':(n==='17'&&S.verified?'data-go="me"':''))+'><div style="font-size:18px">'+(id||(n==='17'&&S.verified)?'🏠':'🏢')+'</div><div class="hn">Nr. '+n+'</div><div class="dots">'+dots+'</div></div>';}).join('')+'</div>';}
+ var offers=posts().filter(function(p){return p.kind==='angebot';}).length;
+ var reqs=posts().filter(function(p){return p.kind==='gesuch';}).length;
+ var html='<p class="muted small" style="margin:0">Deine Straßengemeinschaft</p><h1 style="margin-top:2px">'+STREET+'</h1><p class="muted small" style="margin-top:-4px">'+PLZ+' · fiktive Demo-Straße</p>'+
+ '<div class="grid2" style="grid-template-columns:repeat(3,1fr);margin:14px 0"><div class="stat"><b>'+(ids.length+(S.verified?1:0))+'</b><span>verifizierte Nachbar:innen</span></div><div class="stat"><b>'+offers+'</b><span>Angebote</span></div><div class="stat"><b>'+reqs+'</b><span>Gesuche</span></div></div>'+
+ '<div class="map"><span class="tree" style="left:6px;top:50%">🌳</span><span class="tree" style="right:6px;top:50%">🌳</span>'+houses(top)+'<div class="street"><span>'+STREET.toUpperCase()+'</span></div>'+houses(bottom)+'</div>'+
+ '<p class="small muted" style="text-align:center">Tippe auf ein Haus, um zu sehen, wer dort hilft.</p>';
+ html+='<div class="card" style="background:var(--mustard2);border-color:#efd9a8"><div class="row"><div style="font-size:28px">✨</div><div class="grow" style="flex:1"><b>KI-Vorschlag für heute</b><p class="small" style="margin:2px 0 0">Hannelore hat 6 Eier übrig, Lena & Mats suchen Eier für den Geburtstagskuchen. Beide wohnen 4 Häuser auseinander.</p></div></div><a class="btn small" href="#ki" style="margin-top:10px">Alle Vorschläge ansehen</a></div>';
+ html+='<h2>Wer hier wohnt und hilft</h2><div class="card" style="padding:4px 14px">'+ids.map(function(id){var p=PEOPLE[id];var what=p.skills.concat(p.tools).slice(0,2).map(function(x){return x[1];}).join(' · ');return '<a class="list-item" href="#p/'+id+'">'+av(id)+'<div class="grow"><b>'+esc(p.name)+'</b> <span class="small muted">Nr. '+p.hn+'</span><div class="sub">'+esc(what)+'</div></div><span class="muted">›</span></a>';}).join('')+'</div>';
+ html+='<h2>Neu am Brett</h2>'+posts().slice(0,3).map(postCard).join('')+'<a class="btn sec" href="#board">Zum Nachbarschafts-Brett</a>';
+ html+='<div class="card" style="margin-top:18px"><h3>🛡️ Warum du hier allen trauen kannst</h3><p class="small muted">Jedes Mitglied hat sich mit dem Personalausweis verifiziert und wohnt nachweislich im '+STREET+'. Die Straßengemeinschaft ist nur für verifizierte Nachbar:innen sichtbar. Wer sich daneben benimmt, kann von der Gemeinschaft gemeldet werden.</p></div>';
+ return html;
+}
+
+/* ---------- POSTS ---------- */
+function postCard(p){
+ var who=person(p.who);var req=S.requested[p.id];var mine=p.who==='me';
+ var action=mine?'<span class="small muted">Dein Beitrag</span>':(req?'<span class="done-badge">✓ '+(p.kind==='angebot'?'Angefragt':'Hilfe angeboten')+'</span>':'<button class="btn small'+(p.kind==='gesuch'?' green':'')+'" data-req="'+p.id+'">'+(p.kind==='angebot'?'Anfragen':'Ich helfe')+'</button>');
+ return '<div class="card post"><div class="row" style="align-items:flex-start"><div class="icon">'+p.icon+'</div><div style="flex:1;min-width:0"><div class="kind '+p.kind+'">'+(p.kind==='angebot'?'Biete':'Suche')+' · '+(CAT_ICON[p.cat]||'')+' '+catName(p.cat)+'</div><h3 style="margin-top:3px">'+esc(p.title)+'</h3><p class="small" style="margin:3px 0 0">'+esc(p.desc)+'</p>'+
+ '<div class="row" style="justify-content:space-between;margin-top:9px"><a href="'+(mine?'#me':'#p/'+p.who)+'" class="meta" style="text-decoration:none;margin:0">'+esc(who.name)+(mine?'':' · Nr. '+who.hn)+' · '+p.time+'</a>'+action+'</div></div></div></div>';
+}
+function catName(c){for(var i=0;i<CATS.length;i++)if(CATS[i][0]===c)return CATS[i][1].replace(/^[^ ]+ /,'');return c;}
+function viewBoard(){
+ var list=posts().filter(function(p){return (boardCat==='alle'||p.cat===boardCat)&&(boardKind==='alle'||p.kind===boardKind);});
+ return '<h1>Nachbarschafts-Brett</h1><p class="muted">Biete an, was du übrig hast. Frag, was du brauchst. Alles ohne Geld.</p>'+
+ '<div class="seg" style="margin:12px 0">'+[['alle','Alles'],['angebot','Biete'],['gesuch','Suche']].map(function(k){return '<button data-kind="'+k[0]+'" class="'+(boardKind===k[0]?'on':'')+'">'+k[1]+'</button>';}).join('')+'</div>'+
+ '<div class="chips">'+CATS.map(function(c){return '<button class="chip'+(boardCat===c[0]?' on':'')+'" data-cat="'+c[0]+'">'+c[1]+'</button>';}).join('')+'</div>'+
+ (list.length?list.map(postCard).join(''):'<div class="card" style="text-align:center"><p class="muted">Hier ist gerade nichts. Sei die Erste!</p></div>');
+}
+function openNewPost(){
+ var cats=CATS.slice(1);
+ sheet('<h2 style="margin-top:0">Neuer Beitrag</h2>'+
+ '<div class="seg" id="npk"><button data-k="angebot" class="on">Ich biete</button><button data-k="gesuch">Ich suche</button></div>'+
+ '<label>Kategorie</label><select id="npc">'+cats.map(function(c){return '<option value="'+c[0]+'">'+c[1]+'</option>';}).join('')+'</select>'+
+ '<label>Was genau?</label><input id="npt" placeholder="z. B. Mascarpone-Kekse, 10 Stück" maxlength="60">'+
+ '<label>Beschreibung</label><textarea id="npd" placeholder="Wann und wo kann man es abholen?"></textarea>'+
+ '<button class="btn" id="npsave" style="margin-top:14px">Ans Brett hängen</button>');
+ var kind='angebot';
+ document.querySelectorAll('#npk button').forEach(function(b){b.onclick=function(){kind=b.dataset.k;document.querySelectorAll('#npk button').forEach(function(x){x.classList.toggle('on',x===b);});};});
+ document.getElementById('npsave').onclick=function(){
+  var t=document.getElementById('npt').value.trim();if(!t){toast('Schreib kurz, was du anbietest oder suchst.');return;}
+  var c=document.getElementById('npc').value;var d=document.getElementById('npd').value.trim();
+  S.myPosts.unshift({id:Date.now(),kind:kind,cat:c,icon:CAT_ICON[c],title:t,desc:d||'Meldet euch einfach bei mir.',who:'me',time:'gerade eben',tags:t.toLowerCase().split(/\W+/)});
+  save();closeSheet();boardCat='alle';boardKind='alle';render();toast('Dein Beitrag hängt am Brett. Die KI schaut, wer passen könnte.');
+ };
+}
+function openRequest(id){
+ var p=posts().filter(function(x){return String(x.id)===String(id);})[0];if(!p)return;
+ var who=person(p.who);
+ var txt=p.kind==='angebot'?'Hallo '+who.name+', ich würde mich sehr über „'+p.title+'“ freuen. Wann passt es dir?':'Hallo '+who.name+', ich kann dir helfen! Wann passt es dir?';
+ sheet('<div class="row">'+av(p.who)+'<div><b>Nachricht an '+esc(who.name)+'</b><div class="small muted">Nr. '+who.hn+', '+STREET+' · verifiziert</div></div></div>'+
+ '<div class="card" style="margin-top:12px"><div class="small muted">Es geht um:</div><b>'+p.icon+' '+esc(p.title)+'</b></div>'+
+ '<textarea id="rq">'+esc(txt)+'</textarea><button class="btn" id="rqsend" style="margin-top:12px">Nachricht senden (Demo)</button>'+
+ '<p class="small muted" style="text-align:center">Im Prototyp wird nichts wirklich gesendet.</p>');
+ document.getElementById('rqsend').onclick=function(){S.requested[p.id]=1;save();closeSheet();render();toast(who.name+' bekommt deine Nachricht (Demo). Gegenseitige Hilfe in Aktion!');};
+}
+
+/* ---------- PROFILE ---------- */
+function resList(arr){return arr.map(function(r){return '<div class="res"><div class="e">'+r[0]+'</div><div><b>'+esc(r[1])+'</b>'+(r[2]?'<div class="small muted">'+esc(r[2])+'</div>':'')+'</div></div>';}).join('');}
+function viewProfile(id){
+ var p;
+ if(id==='me'){
+  var mine=S.myPosts;
+  p={name:me().name,hn:'17',since:'heute',bio:'Kreativ, neugierig, Labor-Erfahrung in Hämatologie und Physik. Ich schreibe, zeichne und backe gern Kekse.',
+   food:mine.filter(function(x){return x.kind==='angebot'&&x.cat==='lebensmittel';}).map(function(x){return [x.icon,x.title,x.desc];}),
+   bake:[['🍪','Mascarpone-Schoko-Kekse','backe ich gern für die Straße']].concat(mine.filter(function(x){return x.kind==='angebot'&&(x.cat==='backzutaten'||x.cat==='gebackenes');}).map(function(x){return [x.icon,x.title,x.desc];})),
+   tools:[['🎨','Zeichenmaterial und Bambuspapier','zum gemeinsamen Malen']],
+   skills:[['🔬','Physik- und Bio-Nachhilfe',''],['✍️','Gedichte und Texte schreiben','für Karten, Feste, Trauer']],
+   needs:mine.filter(function(x){return x.kind==='gesuch';}).map(function(x){return x.title;}),helped:0};
+ }else p=PEOPLE[id];
+ var verified=id!=='me'||S.verified;
+ var html=(id!=='me'?'<a class="link small" href="#home">‹ Zurück zur Straße</a>':'')+
+ '<div style="text-align:center;margin-top:10px">'+av(id,true,'margin:0 auto')+
+ '<h1 style="margin-top:10px">'+esc(p.name)+'</h1>'+
+ (verified?'<span class="pill">✓ Verifiziert · wohnt im '+STREET+'</span>':'<a href="#verify" class="pill warn" style="text-decoration:none">Noch nicht verifiziert · jetzt verifizieren</a>')+
+ '<p class="small muted">Nr. '+p.hn+' · dabei seit '+p.since+(p.helped?' · '+p.helped+' × geholfen':'')+'</p><p>'+esc(p.bio)+'</p></div>';
+ if(p.food.length)html+='<div class="section-title">🥕 Aus dem Kühlschrank</div><div class="card" style="margin-top:0">'+resList(p.food)+'</div>';
+ if(p.bake.length)html+='<div class="section-title">🥐 Gebackenes und Backzutaten</div><div class="card" style="margin-top:0">'+resList(p.bake)+'</div>';
+ if(p.tools.length)html+='<div class="section-title">🛠️ Werkzeug und Dinge zum Leihen</div><div class="card" style="margin-top:0">'+resList(p.tools)+'</div>';
+ if(p.skills.length)html+='<div class="section-title">🤲 Das kann ich für dich tun</div><div class="card" style="margin-top:0">'+resList(p.skills)+'</div>';
+ if(p.needs.length)html+='<div class="section-title">🙋 Das brauche ich gerade</div><div class="card" style="margin-top:0">'+p.needs.map(function(n){return '<div class="res"><div class="e">💛</div><div>'+esc(n)+'</div></div>';}).join('')+'</div>';
+ if(id!=='me')html+='<button class="btn" data-msg="'+id+'" style="margin-top:10px">Nachricht an '+esc(p.name)+'</button>';
+ else html+='<button class="btn sec" data-act="newpost" style="margin-top:10px">+ Etwas anbieten oder suchen</button><button class="btn sec" data-act="reset" style="margin-top:10px">Demo zurücksetzen</button>';
+ return html;
+}
+
+/* ---------- KI ---------- */
+var KI_PRESETS=['Ich brauche Eier zum Backen','Mein Klo tropft','Regal aufhängen','Mehl und Hefe','Eine Leiter','Lampe anschließen'];
+function viewKI(){
+ return '<h1>✨ KI-Vorschlag</h1><p class="muted">Sag, was du brauchst. Die KI schaut, wer in deiner Straße es übrig hat oder kann. Sie schlägt nur vor: Du und deine Nachbar:innen entscheidet.</p>'+
+ '<div class="card"><label for="need" style="margin-top:0">Was brauchst du?</label><input id="need" placeholder="z. B. Ich brauche Eier für einen Kuchen"><div class="chips" style="margin-top:10px">'+KI_PRESETS.map(function(k){return '<button class="chip" data-preset="'+esc(k)+'">'+esc(k)+'</button>';}).join('')+'</div><button class="btn" id="kigo" style="margin-top:6px">Passende Nachbar:innen finden</button></div>'+
+ '<div id="kiout"></div>'+
+ '<h2>Die KI hat von selbst gesehen</h2><p class="small muted" style="margin-top:-4px">Angebote und Gesuche, die zusammenpassen. Damit nichts im Müll landet.</p>'+
+ autoPair('hannelore','🥚 6 Eier, müssen bis Freitag weg','familie','🎂 Eier für den Geburtstagskuchen','Gleiche Sache, Haus 7 und Haus 11, die Eier laufen bald ab. Rettet Essen und einen Kindergeburtstag.',96)+
+ autoPair('jonas','🪜 Stehleiter, 6 Stufen','mira','🌳 Leiter für Samstag','Jonas verleiht seine Leiter, Mira braucht sie am Samstag für den Kirschbaum.',91)+
+ autoPair('aylin','🍞 2 Würfel frische Hefe','piotr','🥖 backt jeden Samstag Brot','Die Hefe läuft übermorgen ab. Piotr backt am Samstag und könnte sie verbrauchen.',78)+
+ '<div class="card"><h3>So arbeitet die KI in Newtopia</h3><p class="small muted">Sie liest nur, was ihr selbst ans Brett und in eure Profile schreibt. Sie verkauft nichts, zeigt keine Werbung und entscheidet nichts über eure Köpfe hinweg. Sie achtet auf Nähe, Ablaufdaten und darauf, dass nicht immer dieselben helfen.</p></div>';
+}
+function autoPair(a,at,b,bt,why,score){
+ return '<div class="card match"><div class="row" style="justify-content:space-between"><b>Passt zusammen</b><span class="score">'+score+' % Treffer</span></div>'+
+ '<div class="pair"><div class="side">'+av(a,false,'margin:0 auto 5px')+'<b>'+esc(PEOPLE[a].name)+'</b><br>'+at+'</div><div class="arrow">⇄</div><div class="side">'+av(b,false,'margin:0 auto 5px')+'<b>'+esc(PEOPLE[b].name)+'</b><br>'+bt+'</div></div>'+
+ '<div class="why">💡 '+why+'</div><button class="btn small sec" style="margin-top:10px;width:100%" data-connect="'+a+'|'+b+'">Beide zusammenbringen (Demo)</button></div>';
+}
+function bindKI(){
+ var input=document.getElementById('need');
+ document.querySelectorAll('[data-preset]').forEach(function(b){b.onclick=function(){input.value=b.dataset.preset;runKI();};});
+ document.getElementById('kigo').onclick=runKI;
+ input.onkeydown=function(e){if(e.key==='Enter')runKI();};
+}
+function runKI(){
+ var q=document.getElementById('need').value.trim().toLowerCase();var out=document.getElementById('kiout');
+ if(!q){toast('Schreib kurz, was du brauchst.');return;}
+ out.innerHTML='<div class="card" style="text-align:center"><div class="spinner"></div><p class="muted small">Die KI schaut ins Brett und in die Profile im '+STREET+' …</p></div>';
+ setTimeout(function(){
+  var words=q.replace(/[^a-zäöüß ]/g,' ').split(/\s+/).filter(Boolean);var want={};
+  words.forEach(function(w){Object.keys(KEYWORDS).forEach(function(k){if(w.indexOf(k)===0||(k.length>3&&w.indexOf(k)>=0)){KEYWORDS[k].forEach(function(t){want[t]=(want[t]||0)+(t===k?2:1);});}});});
+  var res=posts().filter(function(p){return p.kind==='angebot'&&p.who!=='me';}).map(function(p){var s=0,hit=[];(p.tags||[]).forEach(function(t){if(want[t]){s+=want[t];hit.push(t);}});return {p:p,s:s,hit:hit};}).filter(function(x){return x.s>0;}).sort(function(a,b){return b.s-a.s;}).slice(0,3);
+  if(!res.length){out.innerHTML='<div class="card"><h3>Noch kein Treffer</h3><p class="small muted">Im Moment hat niemand im '+STREET+' genau das angeboten. Soll die KI ein Gesuch ans Brett hängen? Sie meldet sich, sobald jemand passt.</p><button class="btn small" data-act="newpost">Gesuch ans Brett hängen</button></div>';return;}
+  var max=res[0].s;
+  out.innerHTML='<h2>Vorschläge für dich</h2>'+res.map(function(x,i){var who=PEOPLE[x.p.who];var pct=Math.min(98,Math.round(70+28*x.s/max)-i*4);var dist=Math.abs(parseInt(who.hn,10)-17)/2;
+   return '<div class="card match"><div class="row" style="justify-content:space-between"><div class="row">'+av(x.p.who)+'<div><b>'+esc(who.name)+'</b><div class="small muted">Nr. '+who.hn+' · '+(dist<=1?'direkt nebenan':Math.round(dist)+' Häuser weiter')+'</div></div></div><span class="score">'+pct+' %</span></div>'+
+   '<h3 style="margin-top:10px">'+x.p.icon+' '+esc(x.p.title)+'</h3>'+
+   '<div class="why">💡 Warum: passt zu „'+esc(x.hit.slice(0,3).join(', '))+'“. '+esc(who.name)+' hat schon '+who.helped+' × in der Straße geholfen.'+(/bis |laufen|muss|weg/.test(x.p.desc+' '+x.p.title)?' Das Angebot ist zeitlich begrenzt, also schnell sein.':'')+'</div>'+
+   (S.requested[x.p.id]?'<p class="done-badge">✓ Angefragt</p>':'<button class="btn small" style="margin-top:10px;width:100%" data-req="'+x.p.id+'">'+esc(who.name)+' fragen</button>')+'</div>';}).join('');
+ },1300);
+}
+
+/* ---------- KOOP ---------- */
+function viewKoop(){
+ var costs=[['Server und Hosting',1150,'#d9653b'],['Ausweis-Prüfung (eID-Dienst)',780,'#3e7c59'],['KI-Rechenzeit',420,'#e9b44c'],['Datenschutz-Prüfung und Sicherheit',350,'#8e6bb5'],['Rücklage für schlechte Zeiten',300,'#2f6f8f']];
+ var total=costs.reduce(function(s,c){return s+c[1];},0);var members=1000;var income=members*3;
+ var vote=S.votes.werkzeug;
+ return '<h1>🤝 Die Koop</h1><p class="muted">Newtopia ist eine Genossenschaft. Die App gehört denen, die sie benutzen. Nicht Investoren, nicht Werbefirmen.</p>'+
+ '<div class="card" style="background:linear-gradient(160deg,#f6d9c4,#fbf0dd);border:none"><div class="small muted">Mitgliedsbeitrag</div><div style="font-size:34px;font-weight:800">'+S.fee+' € <span style="font-size:15px;font-weight:600" class="muted">im Monat</span></div>'+
+ '<p class="small">Solidarisch gestaffelt: Wer weniger hat, gibt weniger. Wer mehr hat, gibt mehr. Niemand wird ausgeschlossen.</p><input type="range" min="1" max="6" step="1" value="'+S.fee+'" id="fee" style="padding:0;border:none;background:none"><div class="row small muted" style="justify-content:space-between"><span>1 € ermäßigt</span><span>3 € normal</span><span>6 € solidarisch</span></div></div>'+
+ '<h2>Wofür das Geld ausgegeben wird</h2><p class="small muted" style="margin-top:-4px">Offene Kasse: Jedes Mitglied sieht jeden Euro. Beispielrechnung bei 1.000 Mitgliedern, pro Monat (Demo-Zahlen).</p>'+
+ '<div class="card">'+costs.map(function(c){return '<div class="costrow"><span>'+c[0]+'</span><b>'+c[1].toLocaleString('de-DE')+' €</b></div><div class="bar"><i style="width:'+(c[1]/total*100).toFixed(1)+'%;background:'+c[2]+'"></i></div>';}).join('')+
+ '<hr style="border:none;border-top:1px solid var(--line);margin:14px 0 4px"><div class="costrow"><span>Ausgaben gesamt</span><b>'+total.toLocaleString('de-DE')+' €</b></div><div class="costrow"><span>Beiträge (1.000 × 3 €)</span><b>'+income.toLocaleString('de-DE')+' €</b></div><div class="costrow" style="color:var(--green)"><span><b>Gewinn für irgendwen</b></span><b>0 €</b></div><p class="small muted">Bleibt etwas übrig, entscheiden die Mitglieder gemeinsam: Beitrag senken oder für die Straßen ausgeben.</p></div>'+
+ '<h2>Unsere Grundsätze</h2><div class="card">'+
+ principle('🚫','Keine Werbung. Nie.','Keine Anzeigen, kein Tracking, kein Verkauf von Daten. Du bist hier nicht das Produkt.')+
+ principle('🗳️','Ein Mitglied, eine Stimme','Egal wie viel jemand zahlt: Jede Stimme zählt gleich. Große Entscheidungen werden abgestimmt.')+
+ principle('🪪','Datensparsam','Vom Ausweis bleibt nur: verifiziert und Straße. Keine zentrale Ausweis-Datenbank.')+
+ principle('🌍','Offener Code','Der Quellcode soll offen sein, damit jede:r nachprüfen kann, was die App tut.')+
+ principle('🌱','Gegenseitige Hilfe','Teilen statt verkaufen. Auf dem Brett gibt es kein Geld, nur Nachbarschaft.')+'</div>'+
+ '<h2>Aktuelle Abstimmung im '+STREET+'</h2><div class="card"><b>Soll die Straße einen gemeinsamen Werkzeugschrank im Hof bekommen?</b><p class="small muted">Vorschlag von Jonas. Läuft noch 5 Tage. 23 von 34 Stimmen abgegeben.</p>'+
+ (vote?'<p class="done-badge">✓ Du hast mit „'+(vote==='ja'?'Ja':'Nein')+'“ abgestimmt. Danke!</p>':'<div class="vote"><button class="btn small green" style="flex:1" data-vote="ja">Ja</button><button class="btn small sec" style="flex:1" data-vote="nein">Nein</button></div>')+'</div>'+
+ '<blockquote>„Die Menschheit ist nicht durch den Kampf ums Dasein groß geworden, sondern durch gegenseitige Hilfe.“<cite>sinngemäß nach Pjotr Kropotkin</cite></blockquote>'+
+ '<a class="btn sec" href="#dev">Für Entwickler:innen: Mitbauen</a>';
+}
+function principle(e,t,d){return '<div class="principle"><div class="e">'+e+'</div><div><b>'+t+'</b><p class="small muted" style="margin:2px 0 0">'+d+'</p></div></div>';}
+
+/* ---------- DEV ---------- */
+function viewDev(){
+ return '<a class="link small" href="#koop">‹ Zurück</a><h1>Für Entwickler:innen</h1><p>Das hier ist ein <b>Klick-Prototyp</b>: nur Oberfläche, nur Demo-Daten, kein Backend, kein echter Login. Er zeigt die Idee. Gesucht werden Leute, die Lust haben, Newtopia richtig zu bauen.</p>'+
+ '<div class="card"><h3>Was gebaut werden müsste</h3>'+
+ principle('🪪','eID-Anbindung','Online-Ausweisfunktion über einen zugelassenen eID-Dienst bzw. die AusweisApp. Nur Wohnort-Abgleich, danach bleibt allein „verifiziert + Straße“. Keine Ausweisdaten speichern.')+
+ principle('🗄️','Backend','Profile, Straßengemeinschaften, Nachbarschafts-Brett, Nachrichten. Datenschutz nach DSGVO, Hosting in der EU.')+
+ principle('✨','KI-Matching','Vorschläge, welches Angebot zu welchem Gesuch passt: Nähe, Ablaufdatum, Fairness. Die KI schlägt vor, Menschen entscheiden.')+
+ principle('🛡️','Schutz und Moderation','Melden, Sperren, Regeln für die Gemeinschaft, besonderer Schutz für Kinder.')+
+ principle('🤝','Genossenschaft','Gründung als eG, Mitgliedsbeiträge, offene Kasse, Abstimmungen in der App.')+'</div>'+
+ '<div class="card" style="background:var(--mustard2);border-color:#efd9a8"><h3>Lust mitzumachen?</h3><p class="small">Melde dich bei Mary über GitHub: <a class="link" href="https://github.com/mary111331" target="_blank" rel="noopener">github.com/mary111331</a></p></div>'+
+ '<p class="small muted">Technik dieses Prototyps: eine einzelne HTML-Datei mit reinem JavaScript, ohne Frameworks. Demo-Eingaben bleiben nur im eigenen Browser.</p>';
+}
+
+/* ---------- SHEETS / TOAST ---------- */
+function sheet(html){closeSheet();var o=document.createElement('div');o.className='overlay';o.id='ov';o.innerHTML='<div class="sheet"><div class="grab"></div>'+html+'</div>';o.onclick=function(e){if(e.target===o)closeSheet();};document.body.appendChild(o);}
+function closeSheet(){var o=document.getElementById('ov');if(o)o.remove();}
+var tt;function toast(m){var t=document.querySelector('.toast');if(t)t.remove();t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);clearTimeout(tt);tt=setTimeout(function(){t.remove();},3200);}
+
+/* ---------- EVENTS ---------- */
+document.addEventListener('click',function(e){
+ var el=e.target.closest('[data-act],[data-req],[data-cat],[data-kind],[data-pin],[data-go],[data-msg],[data-vote],[data-connect]');if(!el)return;
+ var d=el.dataset;
+ if(d.go){location.hash=d.go;return;}
+ if(d.req){openRequest(d.req);return;}
+ if(d.cat){boardCat=d.cat;render();return;}
+ if(d.kind){boardKind=d.kind;render();return;}
+ if(d.vote){S.votes.werkzeug=d.vote;save();render();toast('Deine Stimme zählt genau so viel wie jede andere.');return;}
+ if(d.connect){var ab=d.connect.split('|');toast(PEOPLE[ab[0]].name+' und '+PEOPLE[ab[1]].name+' bekommen den Vorschlag (Demo).');el.outerHTML='<p class="done-badge">✓ Vorschlag verschickt</p>';return;}
+ if(d.msg){var p=PEOPLE[d.msg];sheet('<div class="row">'+av(d.msg)+'<div><b>Nachricht an '+esc(p.name)+'</b><div class="small muted">Nr. '+p.hn+' · verifiziert</div></div></div><textarea id="pm" style="margin-top:12px">Hallo '+esc(p.name)+', </textarea><button class="btn" id="pmsend" style="margin-top:12px">Senden (Demo)</button>');document.getElementById('pmsend').onclick=function(){closeSheet();toast(p.name+' bekommt deine Nachricht (Demo).');};return;}
+ if(d.pin){
+  if(d.pin==='⌫')pin=pin.slice(0,-1);else if(pin.length<6)pin+=d.pin;
+  if(pin.length===6){render();document.querySelector('.pad').style.display='none';document.getElementById('checking').style.display='block';setTimeout(function(){verifyStep=3;render();},1800);}else render();
+  return;
+ }
+ var a=d.act;
+ if(a==='vnext'){verifyStep=1;render();}
+ else if(a==='vfinish'){var n=(document.getElementById('nm').value||'').trim();S.name=n||'Mary';S.verified=true;save();verifyStep=0;location.hash='home';toast('Willkommen im '+STREET+', '+S.name+'!');}
+ else if(a==='newpost'){openNewPost();}
+ else if(a==='skipdemo'){}
+ else if(a==='reset'){localStorage.removeItem('newtopia_demo');S=load();verifyStep=0;location.hash='start';render();toast('Demo zurückgesetzt.');}
+});
+document.addEventListener('input',function(e){if(e.target.id==='fee'){S.fee=parseInt(e.target.value,10);save();var big=e.target.parentNode.querySelector('div[style*="34px"]');if(big)big.firstChild.nodeValue=S.fee+' € ';}});
+window.addEventListener('hashchange',function(){if(location.hash==='#verify'&&verifyStep===3&&S.verified){}render();});
+render();
+})();
+</script>
+</body>
+</html>
